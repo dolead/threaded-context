@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/dolead/threaded-context.svg?branch=master)](https://travis-ci.org/dolead/threaded-context)
+[![Code Climate](https://codeclimate.com/github/dolead/threaded-context/badges/gpa.svg)](https://codeclimate.com/github/dolead/threaded-context)
 [![Coverage Status](https://coveralls.io/repos/github/dolead/threaded-context/badge.svg?branch=master)](https://coveralls.io/github/dolead/threaded-context?branch=master)
 
 ```python
