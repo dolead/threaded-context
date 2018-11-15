@@ -1,22 +1,16 @@
 import threading
 from functools import wraps
+from contextlib import ContextDecorator
 
 thread_local = threading.local()
 
 
-class ThreadedContext:
+class ThreadedContext(ContextDecorator):
 
     def __init__(self, **context):
         self._context = context
         self.is_weak = False
         self.parent = None
-
-    def __call__(self, func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            with self:
-                return func(*args, **kwargs)
-        return wrapper
 
     def __enter__(self):
         "Will provided context will be overrided by existing one."
