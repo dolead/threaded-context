@@ -41,7 +41,7 @@ class WeakThreadedContext(ThreadedContext):
         self.is_weak = True
 
 
-def get_current():
+def get_current_context():
     if hasattr(thread_local, 'threaded_context'):
         return thread_local.threaded_context._context
     return {}

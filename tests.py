@@ -1,52 +1,53 @@
 import unittest
-from threaded_context import get_current, ThreadedContext, WeakThreadedContext
+from threaded_context import get_current_context, ThreadedContext, WeakThreadedContext
 
 
 class ThreadedContextTestCase(unittest.TestCase):
 
-    @staticmethod
-    def test_base():
-        assert get_current() == {}
+    def assert_context_equals(self, context):
+        self.assertEqual(context, get_current_context())
+
+    def test_base(self):
+        self.assert_context_equals({})
         with ThreadedContext(knights='ni', eki='patang'):
-            assert get_current() == {'eki': 'patang', 'knights': 'ni'}
+            self.assert_context_equals({'eki': 'patang', 'knights': 'ni'})
             with ThreadedContext(knights='round table', color='red'):
-                assert get_current() == {'eki': 'patang',
-                        'color': 'red', 'knights': 'ni'}
-            assert get_current() == {'eki': 'patang', 'knights': 'ni'}
-        assert get_current() == {}
+                self.assert_context_equals({'eki': 'patang', 'color': 'red',
+                                            'knights': 'ni'})
+            self.assert_context_equals({'eki': 'patang', 'knights': 'ni'})
+        self.assert_context_equals({})
 
-    @staticmethod
-    def test_base_weak():
-        assert get_current() == {}
+    def test_base_weak(self):
+        self.assert_context_equals({})
         with WeakThreadedContext(knights='ni', eki='patang'):
-            assert get_current() == {'eki': 'patang', 'knights': 'ni'}
+            self.assert_context_equals({'eki': 'patang', 'knights': 'ni'})
             with ThreadedContext(knights='round table', color='red'):
-                assert get_current() == {'eki': 'patang',
-                        'color': 'red', 'knights': 'round table'}
-            assert get_current() == {'eki': 'patang', 'knights': 'ni'}
-        assert get_current() == {}
+                self.assert_context_equals({'eki': 'patang', 'color': 'red',
+                                            'knights': 'round table'})
+            self.assert_context_equals({'eki': 'patang', 'knights': 'ni'})
+        self.assert_context_equals({})
 
-    @staticmethod
-    def test_double_weak():
-        assert get_current() == {}
+    def test_double_weak(self):
+        self.assert_context_equals({})
         with WeakThreadedContext(knights='ni', eki='patang'):
-            assert get_current() == {'eki': 'patang', 'knights': 'ni'}
+            self.assert_context_equals({'eki': 'patang', 'knights': 'ni'})
             with WeakThreadedContext(knights='round table', color='red'):
-                assert get_current() == {'eki': 'patang',
-                        'color': 'red', 'knights': 'round table'}
-            assert get_current() == {'eki': 'patang', 'knights': 'ni'}
-        assert get_current() == {}
+                self.assert_context_equals({'eki': 'patang', 'color': 'red',
+                                            'knights': 'round table'})
+            self.assert_context_equals({'eki': 'patang', 'knights': 'ni'})
+        self.assert_context_equals({})
 
     def test_as_decorator(self):
-        self.assertEqual({}, get_current())
+        self.assert_context_equals({})
+
         @ThreadedContext(knights='round table', color='red')
         def wrapped():
-            self.assertEqual({'eki': 'patang', 'color': 'red', 'knights': 'ni'},
-                    get_current())
+            self.assert_context_equals({'eki': 'patang', 'color': 'red', 'knights': 'ni'})
+
         @ThreadedContext(knights='ni', eki='patang')
         def wrapping():
-            self.assertEqual({'eki': 'patang', 'knights': 'ni'}, get_current())
+            self.assert_context_equals({'eki': 'patang', 'knights': 'ni'})
             wrapped()
-            self.assertEqual({'eki': 'patang', 'knights': 'ni'}, get_current())
+            self.assert_context_equals({'eki': 'patang', 'knights': 'ni'})
         wrapping()
-        self.assertEqual({}, get_current())
+        self.assert_context_equals({})

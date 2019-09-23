@@ -4,11 +4,11 @@
 
 ```python
 >>> with ThreadedContext(knights='ni', eki='patang'):
->>>     print(get_current())
+>>>     print(get_current_context())
 >>>     with ThreadedContext(knights='round table', color='red'):
->>>         print(get_current())
->>>     print(get_current())
->>> print(get_current())
+>>>         print(get_current_context())
+>>>     print(get_current_context())
+>>> print(get_current_context())
 ... {'eki': 'patang', 'knights': 'ni'}
 ... {'eki': 'patang', 'color': 'red', 'knights': 'ni'}
 ... {'eki': 'patang', 'knights': 'ni'}
@@ -16,11 +16,11 @@
 
 # A weak context will be overrided by values declared in other context inside it.
 >>> with WeakThreadedContext(knights='ni', eki='patang'):
->>>     print(get_current())
+>>>     print(get_current_context())
 >>>     with ThreadedContext(knights='round table', color='red'):
->>>         print(get_current())
->>>     print(get_current())
->>> print(get_current())
+>>>         print(get_current_context())
+>>>     print(get_current_context())
+>>> print(get_current_context())
 ... {'eki': 'patang', 'knights': 'ni'}
 ... {'eki': 'patang', 'color': 'red', 'knights': 'round table'}
 ... {'eki': 'patang', 'knights': 'ni'}
@@ -28,11 +28,11 @@
 
 # Even if the context inside is also weak. The last weak or the first strong will prevail.
 >>> with WeakThreadedContext(knights='ni', eki='patang'):
->>>     print(get_current())
+>>>     print(get_current_context())
 >>>     with WeakThreadedContext(knights='round table', color='red'):
->>>         print(get_current())
->>>     print(get_current())
->>> print(get_current())
+>>>         print(get_current_context())
+>>>     print(get_current_context())
+>>> print(get_current_context())
 ... {'eki': 'patang', 'knights': 'ni'}
 ... {'eki': 'patang', 'color': 'red', 'knights': 'round table'}
 ... {'eki': 'patang', 'knights': 'ni'}
