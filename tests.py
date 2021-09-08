@@ -84,7 +84,8 @@ class ThreadedContextTestCase(unittest.TestCase):
         with ThreadedContext(knights='ni'):
             self.assert_context_equals({'knights': 'ni'})
             update_current_context(knights='round table', color='red')
-            self.assert_context_equals({'knights': 'ni', 'color': 'red'})
+            self.assert_context_equals({'knights': 'round table',
+                                        'color': 'red'})
         with WeakThreadedContext(knights='ni'):
             self.assert_context_equals({'knights': 'ni'})
             update_current_context(knights='round table', color='red')
