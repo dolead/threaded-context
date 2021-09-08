@@ -90,4 +90,3 @@ def update_current_context(**context):
         thread_local.threaded_context = ThreadedContext(**context)
     else:
         current_context.update_context(**context)
-
