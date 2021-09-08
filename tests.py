@@ -84,7 +84,8 @@ class ThreadedContextTestCase(unittest.TestCase):
         with ThreadedContext(knights='ni'):
             self.assert_context_equals({'knights': 'ni'})
             update_current_context(knights='round table', color='red')
-            self.assert_context_equals({'knights': 'ni', 'color': 'red'})
+            self.assert_context_equals({'knights': 'round table',
+                                        'color': 'red'})
         with WeakThreadedContext(knights='ni'):
             self.assert_context_equals({'knights': 'ni'})
             update_current_context(knights='round table', color='red')
@@ -95,3 +96,22 @@ class ThreadedContextTestCase(unittest.TestCase):
         self.assert_context_equals({'knights': 'round table', 'color': 'red'})
         reset_context()
         self.assert_context_equals({})
+
+    def test_recursive_context(self):
+        my_ctx = ThreadedContext(knights='ni')
+        with my_ctx:
+            self.assert_context_equals({'knights': 'ni'})
+            with my_ctx:
+                self.assert_context_equals({'knights': 'ni'})
+                with my_ctx:
+                    self.assert_context_equals({'knights': 'ni'})
+
+    def test_resilient_thread_type(self):
+        self.assert_context_equals({})
+        with WeakThreadedContext(knights='ni'):
+            self.assert_context_equals({'knights': 'ni'})
+            with ThreadedContext(color='red'):
+                self.assert_context_equals({'knights': 'ni', 'color': 'red'})
+                with WeakThreadedContext(knights='eki'):
+                    self.assert_context_equals({'knights': 'eki',
+                                                'color': 'red'})
