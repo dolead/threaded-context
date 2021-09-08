@@ -17,7 +17,9 @@ class ThreadedContext(ContextDecorator):
 
     def __enter__(self):
         "Will provided context will be overrided by existing one."
-        self.parent = _get_current_context_object()
+        # Avoiding finding ourselve in an infinite loop
+        if self not in list(_browse_up_context()):
+            self.parent = _get_current_context_object()
         thread_local.threaded_context = self
         return self
 
@@ -60,7 +62,8 @@ class WeakBrutalThreadedContext(WeakThreadedContext, BrutalThreadedContext):
 def _browse_up_context(current=None):
     current = current or _get_current_context_object()
     if current is not None:
-        yield from _browse_up_context(current.parent)
+        if current.parent is not None:
+            yield from _browse_up_context(current.parent)
         yield current
 
 

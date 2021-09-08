@@ -96,3 +96,12 @@ class ThreadedContextTestCase(unittest.TestCase):
         self.assert_context_equals({'knights': 'round table', 'color': 'red'})
         reset_context()
         self.assert_context_equals({})
+
+    def test_recursive_context(self):
+        my_ctx = ThreadedContext(knights='ni')
+        with my_ctx:
+            self.assert_context_equals({'knights': 'ni'})
+            with my_ctx:
+                self.assert_context_equals({'knights': 'ni'})
+                with my_ctx:
+                    self.assert_context_equals({'knights': 'ni'})
