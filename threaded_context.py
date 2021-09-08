@@ -70,14 +70,18 @@ def _browse_up_context(current=None):
 def get_current_context(current=None):
     current = current or _get_current_context_object()
     final_context = {}
+    from_ctx = {}
     for ctx in _browse_up_context(current):
         for key, value in ctx.level_context.items():
             if key not in final_context:
                 final_context[key] = value
-            elif ctx.parent and isinstance(ctx.parent, WeakThreadedContext):
+                from_ctx[key] = ctx
+            elif isinstance(from_ctx[key], WeakThreadedContext):
                 final_context[key] = value
+                from_ctx[key] = ctx
             elif isinstance(ctx, BrutalThreadedContext):
                 final_context[key] = value
+                from_ctx[key] = ctx
     return final_context
 
 

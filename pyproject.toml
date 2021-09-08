@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "threaded-context"
-version = "1.2.1"
+version = "1.2.2"
 description = "Basic context manager with inheritance management."
 authors = ["François Schmidts <francois@schmidts.fr>"]
 license = "GNU General Public License v3 (GPLv3)"

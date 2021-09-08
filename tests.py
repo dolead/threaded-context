@@ -105,3 +105,13 @@ class ThreadedContextTestCase(unittest.TestCase):
                 self.assert_context_equals({'knights': 'ni'})
                 with my_ctx:
                     self.assert_context_equals({'knights': 'ni'})
+
+    def test_resilient_thread_type(self):
+        self.assert_context_equals({})
+        with WeakThreadedContext(knights='ni'):
+            self.assert_context_equals({'knights': 'ni'})
+            with ThreadedContext(color='red'):
+                self.assert_context_equals({'knights': 'ni', 'color': 'red'})
+                with WeakThreadedContext(knights='eki'):
+                    self.assert_context_equals({'knights': 'eki',
+                                                'color': 'red'})
