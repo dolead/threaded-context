@@ -60,8 +60,7 @@ class WeakBrutalThreadedContext(WeakThreadedContext, BrutalThreadedContext):
 def _browse_up_context(current=None):
     current = current or _get_current_context_object()
     if current is not None:
-        if current.parent is not None:
-            yield from _browse_up_context(current.parent)
+        yield from _browse_up_context(current.parent)
         yield current
 
 
