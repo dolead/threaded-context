@@ -17,6 +17,9 @@ class ThreadedContext(ContextDecorator):
 
     def __enter__(self):
         "Will provided context will be overrided by existing one."
+        # Clear any post-mortem context when entering a new live context
+        if hasattr(thread_local, 'threaded_context_post_mortem'):
+            del thread_local.threaded_context_post_mortem
         # Avoiding finding ourselve in an infinite loop
         if self not in list(_browse_up_context()):
             self.parent = _get_current_context_object()
@@ -24,12 +27,18 @@ class ThreadedContext(ContextDecorator):
         return self
 
     def __exit__(self, rtype, rvalue, traceback):
-        # not erasing context when execepting so it can be analysed post-mortem
         existing_context = getattr(thread_local, 'threaded_context', None)
         is_exception = isinstance(rvalue, Exception)
+        # On exception, save the resolved context for post-mortem analysis.
+        # Only set once (innermost context wins) so it is not overwritten as
+        # the exception propagates up through outer context managers.
+        if is_exception and not hasattr(thread_local, 'threaded_context_post_mortem'):
+            thread_local.threaded_context_post_mortem = get_current_context(self)
+        # Always restore the parent context, even on exception, so that
+        # re-entering any context manager afterwards starts with a clean slate.
         # if no existing_context, context has been erased
         # not pushing parent as current context
-        if not is_exception and existing_context:
+        if existing_context:
             if self.parent is not None:
                 thread_local.threaded_context = self.parent
             else:
@@ -68,7 +77,11 @@ def _browse_up_context(current=None):
 
 
 def get_current_context(current=None):
-    current = current or _get_current_context_object()
+    if current is None:
+        current = _get_current_context_object()
+        if current is None:
+            # No live context: return a copy of the post-mortem context if available
+            return deepcopy(getattr(thread_local, 'threaded_context_post_mortem', {}))
     final_context = {}
     from_ctx = {}
     for ctx in _browse_up_context(current):
@@ -88,6 +101,8 @@ def get_current_context(current=None):
 def reset_context():
     if _get_current_context_object():
         del thread_local.threaded_context
+    if hasattr(thread_local, 'threaded_context_post_mortem'):
+        del thread_local.threaded_context_post_mortem
 
 
 def update_current_context(**context):
