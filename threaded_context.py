@@ -6,7 +6,7 @@ thread_local = threading.local()
 
 
 def _get_current_context_object():
-    return getattr(thread_local, 'threaded_context', None)
+    return getattr(thread_local, "threaded_context", None)
 
 
 class ThreadedContext(ContextDecorator):
@@ -25,7 +25,7 @@ class ThreadedContext(ContextDecorator):
 
     def __exit__(self, rtype, rvalue, traceback):
         # not erasing context when execepting so it can be analysed post-mortem
-        existing_context = getattr(thread_local, 'threaded_context', None)
+        existing_context = getattr(thread_local, "threaded_context", None)
         is_exception = isinstance(rvalue, Exception)
         # if no existing_context, context has been erased
         # not pushing parent as current context
