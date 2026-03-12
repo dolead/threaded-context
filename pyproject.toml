@@ -1,15 +1,30 @@
-[tool.poetry]
+[project]
 name = "threaded-context"
 version = "1.2.2"
 description = "Basic context manager with inheritance management."
-authors = ["François Schmidts <francois@schmidts.fr>"]
-license = "GNU General Public License v3 (GPLv3)"
+authors = [{name = "François Schmidts", email = "francois@schmidts.fr"}]
+license = "GPL-3.0-only"
+requires-python = ">=3.9"
+dependencies = []
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.9"
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.3"
+[tool.poetry.group.dev.dependencies]
+pytest = {version = ">=8.0,<9", python = ">=3.10"}
+pycodestyle = "^2.14.0"
+black = {version = "^26.3.1", python = ">=3.10"}
+flake8 = "^7.3.0"
+pylint = {version = "^4.0.5", python = ">=3.10"}
+mypy = {version = "^1.19.1", python = ">=3.9"}
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["tests.py", "test_*.py", "*_test.py"]
+
+[tool.black]
+line-length = 79
+target-version = ["py39"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
