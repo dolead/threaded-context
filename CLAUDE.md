@@ -17,10 +17,8 @@ make clean         # rm build artifacts and caches
 # run a single test
 poetry run pytest tests.py::ThreadedContextTestCase::test_base
 
-# release (bumps version, commits, tags — does NOT push)
-make release-patch
-make release-minor
-make release-major
+# release (prompts for patch/minor/major, commits, tags — does NOT push)
+make release
 
 # publish to PyPI (runs build first)
 make publish

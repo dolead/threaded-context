@@ -22,6 +22,10 @@ mypy = {version = "^1.19.1", python = ">=3.9"}
 testpaths = ["."]
 python_files = ["tests.py", "test_*.py", "*_test.py"]
 
+[tool.black]
+line-length = 79
+target-version = ["py39"]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

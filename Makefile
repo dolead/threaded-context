@@ -5,9 +5,7 @@
 #   make test              - run test suite via pytest
 #   make lint              - run all linters (pycodestyle, black, flake8, pylint, mypy)
 #   make build             - clean, lint, test, then build distribution
-#   make release-patch     - bump patch version, commit, and git tag (vX.Y.Z)
-#   make release-minor     - bump minor version, commit, and git tag
-#   make release-major     - bump major version, commit, and git tag
+#   make release           - prompt for bump type, commit, and git tag (vX.Y.Z)
 #   make publish           - build and publish to PyPI
 #
 # Designed to be copy-pasted into any poetry-managed Python library.
@@ -25,7 +23,7 @@ include .vars.mk
 # Targets
 # ──────────────────────────────────────────────
 
-.PHONY: clean test lint build publish release-patch release-minor release-major
+.PHONY: clean test lint build publish release
 
 clean:
 	rm -rf build dist .coverage .mypy_cache .pytest_cache *.egg-info
@@ -57,21 +55,15 @@ publish: build
 # commit the change, and create a git tag (vX.Y.Z).
 # They do NOT push — push manually or let CI handle it.
 
-release-patch:
-	poetry version patch
-	$(MAKE) _release
-
-release-minor:
-	poetry version minor
-	$(MAKE) _release
-
-release-major:
-	poetry version major
-	$(MAKE) _release
-
-# Internal target: commit the version bump and tag
-_release:
-	git add pyproject.toml
-	git commit -m "release v$$(poetry version -s)"
-	git tag "v$$(poetry version -s)"
-	@echo "Release v$$(poetry version -s) ready. Run 'git push && git push --tags' or 'make publish' to deploy."
+release:
+	@echo "Current version: $$(poetry version -s)"
+	@printf "Bump type [patch/minor/major]: " && read BUMP && \
+	case "$$BUMP" in \
+		patch|minor|major) ;; \
+		*) echo "Invalid bump type: $$BUMP"; exit 1 ;; \
+	esac && \
+	poetry version "$$BUMP" && \
+	git add pyproject.toml && \
+	git commit -m "release v$$(poetry version -s)" && \
+	git tag "v$$(poetry version -s)" && \
+	echo "Release v$$(poetry version -s) ready. Run 'git push && git push --tags' or 'make publish' to deploy."
