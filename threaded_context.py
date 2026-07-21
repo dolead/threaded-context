@@ -1,6 +1,6 @@
 import threading
-from copy import deepcopy
 from contextlib import ContextDecorator
+from copy import deepcopy
 
 thread_local = threading.local()
 
